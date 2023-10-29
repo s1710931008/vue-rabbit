@@ -33,3 +33,8 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### github
+```sh
+git remote add origin https://github.com/s1710931008/vue-rabbit.git
+```
