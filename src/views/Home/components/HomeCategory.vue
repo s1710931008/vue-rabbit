@@ -9,6 +9,7 @@ const categoryStore = useCategoryStore()
     <ul class="menu">
       <li v-for="item in categoryStore.categoryList" :key="item.id">
         <RouterLink to="/">{{item.name}}</RouterLink>
+        <!-- children.slice(0,2) 刪除 -->
         <RouterLink v-for="i in item.children.slice(0,2)" :key="i" to="/">{{i.name}}</RouterLink>
         <!-- 弹层layer位置 -->
         <div class="layer">
