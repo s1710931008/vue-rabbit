@@ -1,7 +1,7 @@
 
 <script setup>
 defineProps({
-  goods: {
+  goodVal: {
     type: Object,
     default: () => { }
   }
@@ -10,10 +10,10 @@ defineProps({
 
 <template>
   <RouterLink to="/" class="goods-item">
-    <img :src="goods.picture" alt="" />
-    <p class="name ellipsis">{{ goods.name }}</p>
-    <p class="desc ellipsis">{{ goods.desc }}</p>
-    <p class="price">&yen;{{ goods.price }}</p>
+    <img :src="goodVal.picture" alt="" />
+    <p class="name ellipsis">{{ goodVal.name }}</p>
+    <p class="desc ellipsis">{{ goodVal.desc }}</p>
+    <p class="price">&yen;{{ goodVal.price }}</p>
   </RouterLink>
 </template>
 

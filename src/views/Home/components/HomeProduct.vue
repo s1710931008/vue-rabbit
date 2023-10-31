@@ -27,7 +27,7 @@ onMounted(() => getGood());
         
         <ul class="goods-list">
           <li v-for="good in cate.goods" :key="good.id">
-            <GoodsItem :goods="good" />
+            <GoodsItem :goodVal="good" />
             <!-- <RouterLink to="/" class="goods-item">
               <img v-img-lazy="good.picture" alt="" />
               <p class="name ellipsis">{{ good.name }}</p>
