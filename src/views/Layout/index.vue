@@ -21,6 +21,7 @@ onMounted(() => {
   <LayoutFixed />
   <LayoutNav />
   <LayoutHeader />
+  <!-- 填加key 破壞複用機制-->
   <RouterView />
   <LayoutFooter />
 </template>
