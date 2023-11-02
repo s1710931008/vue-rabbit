@@ -6,6 +6,7 @@ import { ref } from "vue";
 const form = ref({
   account: "",
   password: "",
+  agree: true,
 });
 
 //規則對象
@@ -15,7 +16,38 @@ const rules = {
     { required: true, message: "密碼不能為空", trigger: "blur" },
     { min: 6, max: 14, message: "密碼長度 6-16 字 ", trigger: "blur" },
   ],
+  agree: [
+    {
+      validator: (rule, value, callback) => {
+        console.log(value);
+        //自定義校驗邏輯
+        if (value) {
+          callback();
+        } else {
+          callback(new Error("請勾選協議"));
+        }
+      },
+    },
+  ],
 };
+
+//獲取數據
+const formRef = ref(null);
+const doLogin = () => {
+  //調用實例方法
+  formRef.value.validator((valid) => {
+    //valid:所有表單都通過校驗 才能為ture
+    console.log(valid);
+    //以valid做為判斷條件，如果通過校驗才執行登錄邏輯
+    if (valid) {
+      //TODO LOGIN
+    }
+  });
+};
+
+// 1.用戶和密碼 只需要通過簡單配置
+// 2.同意協議 自定義規則 validator:(rule,value,callback)={}  //callback不管成功失敗都要執行
+// 3.統一校驗 通過調用form實例方法
 </script>
 
 
@@ -53,8 +85,8 @@ const rules = {
               <el-form-item prop="password" label="密码">
                 <el-input v-model="form.password" />
               </el-form-item>
-              <el-form-item label-width="22px">
-                <el-checkbox size="large">
+              <el-form-item prop="agree" label-width="22px">
+                <el-checkbox size="large" v-model="form.agree">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
