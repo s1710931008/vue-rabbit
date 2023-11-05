@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from "vue";
+import { loginAPI } from "@/apis/user";
+
+import { ElMessage } from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
 //表單校驗 帳號 密碼
 
 //1.準備表單對象
@@ -8,6 +12,7 @@ const form = ref({
   password: "",
   agree: true,
 });
+
 
 //規則對象
 const rules = {
@@ -29,18 +34,28 @@ const rules = {
       },
     },
   ],
-};
+}
 
+//測試用
+// id: 18610848230 pw:123456
 //獲取數據
 const formRef = ref(null);
 const doLogin = () => {
+  const { account, password } = form.value //取表單值
   //調用實例方法
-  formRef.value.validator((valid) => {
+  formRef.value.validate(async (valid) => {
     //valid:所有表單都通過校驗 才能為ture
     console.log(valid);
     //以valid做為判斷條件，如果通過校驗才執行登錄邏輯
     if (valid) {
       //TODO LOGIN
+    //   const res = await loginAPI({ account, password }) //將表單件放入查詢
+    //   await loginAPI({ account, password })
+    // 1. 提示用户
+      ElMessage({ type: 'success', message: '登录成功' })
+      // 2. 跳转首页
+      router.push({ path: '/', replace: true })
+    //   router.replace({ path: '/' })
     }
   });
 };
@@ -73,6 +88,7 @@ const doLogin = () => {
         <div class="account-box">
           <div class="form">
             <el-form
+              ref="formRef"
               :model="form"
               :rules="rules"
               label-position="right"
@@ -90,7 +106,7 @@ const doLogin = () => {
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
             </el-form>
           </div>
         </div>

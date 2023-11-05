@@ -1,13 +1,40 @@
 <script setup>
-import GoodsItem from "../Home/components/GoodsItems.vue";
+import { getTopCategoryAPI } from "@/apis/category";
+import { getBannerAPI } from "@/apis/home";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import GoodsItem from "../Home/components/GoodsItems.vue"
+import { onBeforeRouteUpdate } from 'vue-router'
 
-import { useBanner } from "./composables/useBanner"; //啟用封裝banner
-import { userCategory } from "./composables/useCategory"; //啟用封裝Category
+const categoryData = ref({});
+const route = useRoute();
+const getCategory = async (id=route.params.id) => { //如果有傳就取id,如果不傳就取route.params.id
+  // 如何在setup中获取路由参数 useRoute() -> route 等价于this.$route
+  // const res = await getTopCategoryAPI(route.params.id);
+  const res = await getTopCategoryAPI(id);
+  categoryData.value = res.result;
+};
+onMounted(() => getCategory());
 
-const { bannerList } = useBanner(); //啟用封裝banner
-const { categoryData } = userCategory(); //啟用封裝Category
+//目標路由變化，重新發送
+onBeforeRouteUpdate((to)=>{
+  // console.log('路由變化')
+  // console.log(to)
+  getCategory(to.params.id)
+})
 
 //banner 輪播
+const bannerList = ref([]);
+
+const getBanner = async () => {
+  const res = await getBannerAPI({
+    distributionSite: "2",
+  });
+  // console.log(res);
+  bannerList.value = res.result;
+};
+
+onMounted(() => getBanner());
 </script>
 
 <template>
@@ -34,7 +61,7 @@ const { categoryData } = userCategory(); //啟用封裝Category
       <h3>全部分类</h3>
       <ul>
         <li v-for="i in categoryData.children" :key="i.id">
-          <RouterLink :to="`/category/sub/${i.id}`">
+          <RouterLink to="/">
             <img :src="i.picture" />
             <p>{{ i.name }}</p>
           </RouterLink>
