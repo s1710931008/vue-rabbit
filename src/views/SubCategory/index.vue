@@ -1,5 +1,5 @@
 <script setup>
-import { getSubCategoryAPI,getCategoryFilterAPI } from "@/apis/category";
+import { getSubCategoryAPI, getCategoryFilterAPI } from "@/apis/category";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import GoodsItem from "../Home/components/GoodsItems.vue";
@@ -10,30 +10,45 @@ const getCategoryData = async () => {
   const res = await getCategoryFilterAPI(route.params.id);
   categoryData.value = res.result;
 };
-    onMounted(() => getCategoryData());
+onMounted(() => getCategoryData());
 
 //獲取數據
-const goodList = ref([])
+const goodList = ref([]);
 const reqData = ref({
-    categoryId:route.params.id,
-    page:1,
-    pageSize:20,
-    sortField:'publishTime'
-})
-const getGoodList = async ()=>{
-    const res = await getSubCategoryAPI(reqData.value)
-    
-    goodList.value=res.result.items;
-    // console.log(goodList.value)
-}
-onMounted(()=>getGoodList())
+  categoryId: route.params.id,
+  page: 1,
+  pageSize: 20,
+  sortField: "publishTime",
+});
+const getGoodList = async () => {
+  const res = await getSubCategoryAPI(reqData.value);
+
+  goodList.value = res.result.items;
+  // console.log(goodList.value)
+};
+onMounted(() => getGoodList());
 
 // tab切换回调
 const tabChange = () => {
-  console.log('tab切换了', reqData.value.sortField)
-  reqData.value.page = 1
-  getGoodList()
-}
+  console.log("tab切换了", reqData.value.sortField);
+  reqData.value.page = 1;
+  getGoodList();
+};
+
+//加載更多
+const disabled = ref(false);
+const load = async () => {
+  console.log("加載更多");
+  //獲取下一頁
+  reqData.value.page++;
+  const res = await getSubCategoryAPI(reqData.value);
+  //併接數據
+  goodList.value = [...goodList.value, ...res.result.items];
+  //加載完畢，停止監聽
+  if (res.result.items.length === 0) {
+    disabled.value = true;
+  }
+};
 </script>
 
 <template>
@@ -42,21 +57,27 @@ const tabChange = () => {
     <div class="bread-container">
       <el-breadcrumb separator=">">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: `/category/${categoryData.parentID}` }">{{categoryData.parentName}} </el-breadcrumb-item>
-        <el-breadcrumb-item>{{categoryData.name}}</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: `/category/${categoryData.parentID}` }"
+          >{{ categoryData.parentName }}
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>{{ categoryData.name }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-        <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div
+        class="body"
+        v-infinite-scroll="load"
+        :infinite-scroll-disabled="disabled"
+      >
         <!-- 商品列表-->
-        
+
         <GoodsItem v-for="goods in goodList" :goodVal="goods" :key="goods.id" />
-<!-- 
+        <!-- 
   <RouterLink to="/" v-for="goods in goodList" :key="goods.id" class="goods-item" >
     <img :src="goods.picture" alt="" />
     <p class="name ellipsis">{{ goods.name }}</p>
