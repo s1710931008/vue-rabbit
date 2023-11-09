@@ -7,8 +7,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
-//全局判變未登入
-import "@/stores/permission"
+//全局判斷未登入
+//import "@/stores/permission"
 
 
 //引入初始化樣式
