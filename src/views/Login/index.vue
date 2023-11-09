@@ -1,17 +1,27 @@
 <script setup>
 import { ref } from "vue";
-import { loginAPI } from "@/apis/user";
-
+// import { loginAPI } from "@/apis/user";
+import { useRouter } from 'vue-router' //跳轉
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
+
+import {useUserStore} from '@/stores/user'  //採用共享pinia
+const userStore  = useUserStore()
+
 //表單校驗 帳號 密碼
+// 表单数据对象
+const form = ref({
+ account: '13211111111',
+ password: '123456',
+ agree: true
+})
 
 //1.準備表單對象
-const form = ref({
-  account: "",
-  password: "",
-  agree: true,
-});
+// const form = ref({
+//   account: "",
+//   password: "",
+//   agree: true,
+// });
 
 
 //規則對象
@@ -40,8 +50,10 @@ const rules = {
 // id: 18610848230 pw:123456
 //獲取數據
 const formRef = ref(null);
+const router = useRouter() //跳轉
 const doLogin = () => {
   const { account, password } = form.value //取表單值
+
   //調用實例方法
   formRef.value.validate(async (valid) => {
     //valid:所有表單都通過校驗 才能為ture
@@ -49,8 +61,10 @@ const doLogin = () => {
     //以valid做為判斷條件，如果通過校驗才執行登錄邏輯
     if (valid) {
       //TODO LOGIN
-    //   const res = await loginAPI({ account, password }) //將表單件放入查詢
-    //   await loginAPI({ account, password })
+      await userStore.getUserInfo({ account, password })  //採用 store
+      // const res = await logifnAPI({ account, password }) //將表單件放入查詢
+      // await loginAPI({ account, password })
+
     // 1. 提示用户
       ElMessage({ type: 'success', message: '登录成功' })
       // 2. 跳转首页
@@ -90,7 +104,7 @@ const doLogin = () => {
             <el-form
               ref="formRef"
               :model="form"
-              :rules="rules"
+              :rules="rules"  
               label-position="right"
               label-width="60px"
               status-icon
