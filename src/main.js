@@ -7,6 +7,10 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
+//全局判變未登入
+import "@/stores/permission"
+
+
 //引入初始化樣式
 import '@/styles/common.scss'
 //引入懒加载
